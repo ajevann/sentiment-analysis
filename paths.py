@@ -11,20 +11,18 @@ db = MySQLdb.connect(host="localhost",user="root",passwd="password",db="sentimen
 # prepare a cursor object using cursor() method
 cursor = db.cursor()
 
-row = [5, "blah", 8]
-
+sql = "SELECT phrase_lower FROM phrases_train WHERE word_count = 1 "
 
 try:
 	# Execute the SQL command
-	sql = "INSERT INTO words(word, sentiment) VALUES (\'" + row[1] + "\', " + str(row[0]) + ")"
-	print(sql)
 	cursor.execute(sql)
-	# Commit your changes in the database
-	db.commit()
+	# Fetch all the rows in a list of lists.
+	results = cursor.fetchall()
+	for row in results:
+		for word in row:
+			print(word)
 except:
-	# Rollback in case there is any error
-	print("error")
-	db.rollback()
+	print "Error: unable to fecth data"
 
 # disconnect from server
 db.close()
