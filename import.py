@@ -17,13 +17,15 @@ with open('train.tsv','rb') as tsvin:
     tsvin = csv.reader(tsvin, delimiter='\t')
 
     for row in tsvin:
-		sql = "INSERT INTO phrases_train(phrase_id, sentence_id, phrase, phrase_lower, sentiment, sentiment_double, word_count) VALUES (" + row[0] + ", " + row[1] + ", '" + row[2] + "', '" + str(row[2]).lower() + "', " + row[3] + ", " + row[3] + ", " + str(len(row[2].split())) + ")"
+		phrase = str(row[2]).replace('\'', '\\\'')
+		sql = "INSERT INTO phrases_train(phrase_id, sentence_id, phrase, phrase_lower, sentiment, sentiment_double, word_count) VALUES (" + row[0] + ", " + row[1] + ", '" + phrase + "', '" + phrase.lower() + "', " + row[3] + ", " + row[3] + ", " + str(len(phrase.split())) + ")"
 		try:
 			# Execute the SQL command
 			cursor.execute(sql)
 			# Commit your changes in the database
 			db.commit()
-		except:
+		except MySQLdb.Error, e:
+			print "An error has been passed. %s" %e
 			# Rollback in case there is any error
 			db.rollback()
 
@@ -31,15 +33,17 @@ with open('test.tsv','rb') as tsvin:
     tsvin = csv.reader(tsvin, delimiter='\t')
 
     for row in tsvin:
-		sql = "INSERT INTO phrases_test(phrase_id, sentence_id, phrase, phrase_lower, word_count) VALUES (" + row[0] + ", " + row[1] + ", '" + row[2] + "', '" + str(row[2]).lower() + "', " + str(len(row[2].split())) + ")"
+		phrase = str(row[2]).replace('\'', '\\\'')
+		sql = "INSERT INTO phrases_test(phrase_id, sentence_id, phrase, phrase_lower, word_count) VALUES (" + row[0] + ", " + row[1] + ", '" + phrase + "', '" + phrase.lower() + "', " + str(len(phrase.split())) + ")"
 		try:
 		   # Execute the SQL command
 		   cursor.execute(sql)
 		   # Commit your changes in the database
 		   db.commit()
-		except:
-		   # Rollback in case there is any error
-		   db.rollback()
+		except MySQLdb.Error, e:
+			print "An error has been passed. %s" %e
+			# Rollback in case there is any error
+			db.rollback()
 
 # disconnect from server
 db.close()

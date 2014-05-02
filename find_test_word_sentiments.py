@@ -15,25 +15,33 @@ cursor = db.cursor()
 
 try:
 	# Execute the SQL command
-	sql = "SELECT phrase, phrase_id from phrases_test"
+	sql = "SELECT phrase, phrase_id from phrases_test where word_count = 1 and sentiment IS NULL"
 	
 	cursor.execute(sql)
 	results = cursor.fetchall()
 
+	count = 0;
+
 	for phrase in results:
-		sql = "SELECT phrase, sentiment from phrases_train where phrase = \'" + phrase[0].replace('\'', '\\\'') + "\'"
+		for word in phrase[0].split(' '):
+			sql = "SELECT word, sentiment from words where word = \'" + word.replace('\'', '\\\'') + "\'"
+			#print(sql)
+			cursor.execute(sql)
+			matches = cursor.fetchall()
 
-		cursor.execute(sql)
-		matches = cursor.fetchall()
+			#if count % 100 == 0:
+			#	print(count) 
 
-		if len(matches) != 0:
-			matches = matches[0]
-			print(str(phrase[1]) + " : " + str(matches[1]) + " ... " + matches[0])
+			if len(matches) != 0:
+				print(matches)
+			#	count += 1
+				sql = "UPDATE phrases_test set sentiment = " + str(matches[0]) + " where phrase = \'" + word.replace('\'', '\\\'') + "\'"
+				#print(str(matches[0]) + " " + word)
+				#cursor.execute(sql)
 
-		#print(str(phrase[1]) + " " + phrase[0])
 
 	# Commit your changes in the database
-	#db.commit()
+	# db.commit()
 
 except MySQLdb.Error, e:
 	print "An error has been passed. %s" %e

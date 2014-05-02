@@ -26,14 +26,20 @@ try:
 		cursor.execute(sql)
 		matches = cursor.fetchall()
 
+		if phrase[1] % 1000 == 0:
+			print(str(phrase[1]) + " : " + phrase[0]) 
+
 		if len(matches) != 0:
 			matches = matches[0]
-			print(str(phrase[1]) + " : " + str(matches[1]) + " ... " + matches[0])
+			#print(str(phrase[1]) + " : " + str(matches[1]) + " ... " + matches[0])
+
+			sql = "UPDATE phrases_test SET sentiment  = " + str(matches[1]) + " where phrase_id = " + str(phrase[1])
+			cursor.execute(sql)
 
 		#print(str(phrase[1]) + " " + phrase[0])
 
 	# Commit your changes in the database
-	#db.commit()
+	db.commit()
 
 except MySQLdb.Error, e:
 	print "An error has been passed. %s" %e

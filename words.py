@@ -19,16 +19,21 @@ try:
 	# Fetch all the rows in a list of lists.
 	results = cursor.fetchall()
 	for row in results:
-		sql = "INSERT INTO words(word, sentiment, sentiment_double) VALUES (\'" + row[0] + "\', " + str(row[1]) + ", " + str(row[1]) + ")"
+		word = str(row[0]).replace('\'', '\\\'')
+		sql = "INSERT INTO words(word, sentiment, sentiment_double) VALUES (\'" + word + "\', " + str(row[1]) + ", " + str(row[1]) + ")"
 		try:
 			cursor.execute(sql)
 			# Commit your changes in the database
 			db.commit()
-		except:
+		except MySQLdb.Error, e:
+			print("\n" + sql)
+			print "An error has been passed. %s" %e
 			# Rollback in case there is any error
 			db.rollback()
-except:
-	print "Error: unable to fecth data"
+except MySQLdb.Error, e:
+	print "An error has been passed. %s" %e
+	# Rollback in case there is any error
+	db.rollback()
 
 # disconnect from server
 db.close()

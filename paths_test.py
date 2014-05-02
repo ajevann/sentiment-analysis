@@ -21,16 +21,15 @@ try:
 	results = cursor.fetchall()
 
 	for phrase in results:
-		sql = "SELECT phrase, sentiment from phrases_train where phrase = \'" + phrase[0].replace('\'', '\\\'') + "\'"
+		print(phrase[0])
+		for word in phrase[0].split(' '):
+			sql = "SELECT word, sentiment from words where word = \'" + word.replace('\'', '\\\'') + "\'"
 
-		cursor.execute(sql)
-		matches = cursor.fetchall()
+			cursor.execute(sql)
+			matches = cursor.fetchall()
 
-		if len(matches) != 0:
-			matches = matches[0]
-			print(str(phrase[1]) + " : " + str(matches[1]) + " ... " + matches[0])
+			print(word + " " + str(matches[0][1]))
 
-		#print(str(phrase[1]) + " " + phrase[0])
 
 	# Commit your changes in the database
 	#db.commit()
